@@ -13,30 +13,31 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 @RestController
-@RequestMapping("cambio-service")
+@RequestMapping("/cambio-service")
 public class CambioController {
 
     @Autowired
     private Environment environment;
 
     @Autowired
-    private CambioRepository repository;
+    private CambioRepository cambioRepository;
 
-    @GetMapping(value= "/{amount}/{from}/{to}")
+    @GetMapping(value= "/cambio-service/{amount}/{from}/{to}")
     public Cambio getCambio(
             @PathVariable("amount")BigDecimal amount,
             @PathVariable("from") String from,
             @PathVariable("to") String to
             ) {
 
-        var cambio = repository.findByFromAndTo(from, to);
-        if (cambio == null) throw new RuntimeException("Currency Unsupported");
+            Cambio cambio = cambioRepository.findByFromAndTo(from, to)
+                    .orElseThrow(() -> new RuntimeException("currency unsupported"));
 
-        var port = environment.getProperty("local.server.port");
-        BigDecimal conversionFactor = cambio.getConversionFactor();
-        BigDecimal convertedValue = conversionFactor.multiply(amount);
-        cambio.setConvertedValue(convertedValue.setScale(2, RoundingMode.CEILING));
-        cambio.setEnvironment(port);
+            String PORT = environment.getProperty("server.port");
+            BigDecimal conversionFactor = cambio.getConversionFactor();
+            BigDecimal convertedValue = conversionFactor.multiply(amount);
+            cambio.setConvertedValue(convertedValue.setScale(2, RoundingMode.CEILING));
+            cambio.setEnvironment(PORT);
+
         return cambio;
     }
 }
