@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-@Entity
+@Entity(name = "cambio")
 public class Cambio implements Serializable {
 
     @Serial
@@ -17,10 +17,10 @@ public class Cambio implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "from currency, nullable = false, length = 3")
+    @Column(name = "from_currency", nullable = false, length = 3)
     private String from;
 
-    @Column(name = "to currency, nullable = false, length = 3")
+    @Column(name = "to_currency", nullable = false, length = 3)
     private String to;
 
     @Column(nullable = false)
